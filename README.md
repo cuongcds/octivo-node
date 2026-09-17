@@ -58,6 +58,24 @@ The client uses the global `fetch` API by default (Node.js >= 18). Swap it by
 implementing the `HttpClient` interface and passing it as `httpClient` in the
 `OctivoClient` constructor options.
 
+## Examples
+
+Runnable scripts are in [examples/](examples/):
+
+- [examples/create-lead.ts](examples/create-lead.ts) — full example with name, email,
+  phone, and extra `meta` fields, run against the local `src/`.
+- [examples/create-lead.js](examples/create-lead.js) / [examples/create-lead-minimal.js](examples/create-lead-minimal.js) —
+  built-package equivalents, run against `dist/` after `npm run build`.
+
+```bash
+npm install
+npm run example  # runs examples/create-lead.ts via tsx, against src/
+
+# or, against the built package:
+npm run build
+OCTIVO_SOURCE_ID=your-channel-source-id node examples/create-lead.js
+```
+
 ## Errors
 
 - `ValidationError` — thrown client-side before any request is sent (missing email

@@ -25,6 +25,7 @@
     "build:esm": "tsc -p tsconfig.esm.json",
     "build:cjs": "tsc -p tsconfig.cjs.json",
     "test": "node --import tsx --test tests/**/*.test.ts",
+    "example": "node --import tsx examples/create-lead.ts",
     "prepublishOnly": "npm run build"
   },
   "devDependencies": {
