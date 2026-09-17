@@ -66,6 +66,8 @@ Runnable scripts are in [examples/](examples/):
   phone, and extra `meta` fields, run against the local `src/`.
 - [examples/create-lead.js](examples/create-lead.js) / [examples/create-lead-minimal.js](examples/create-lead-minimal.js) —
   built-package equivalents, run against `dist/` after `npm run build`.
+- [examples/create-lead-with-recaptcha.js](examples/create-lead-with-recaptcha.js) —
+  passing a client-generated reCAPTCHA v3 token via `recaptchaToken`.
 
 ```bash
 npm install
