@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { OctivoClient } from '../src/OctivoClient.js';
+import { DEFAULT_BASE_URL, OctivoClient } from '../src/OctivoClient.js';
 import { ApiError, ValidationError } from '../src/errors.js';
 import { FakeHttpClient } from './FakeHttpClient.js';
 
@@ -22,6 +22,15 @@ test('leads.create sends expected URL and fields', async () => {
     name: 'Nguyen Van A',
     phone: '0912345678',
   });
+});
+
+test('leads.create defaults baseUrl to https://octivo.cloud when omitted', async () => {
+  const http = new FakeHttpClient(200, '{"id": 1, "success": true}');
+  const client = new OctivoClient({ sourceId: 'src-123', httpClient: http });
+
+  await client.leads.create({ phone: '0912345678' });
+
+  assert.equal(http.lastUrl, `${DEFAULT_BASE_URL}/api/lead/src-123`);
 });
 
 test('missing email and phone throws ValidationError without sending a request', async () => {

@@ -1,8 +1,9 @@
 # @cuongcds/octivo-node
 
-Node.js SDK for the Octivo CRM Lead capture API — a public, unauthenticated endpoint
-used by landing pages/widgets to create a row in `crm_leads`, scoped to a channel via
-its public `source_id`.
+Node.js SDK for the [Octivo CRM](https://octivo.cloud) API. Lead capture is the first
+resource covered — a public, unauthenticated endpoint used by landing pages/widgets to
+create a row in `crm_leads`, scoped to a channel via its public `source_id`. More
+Octivo CRM resources will be added to this SDK over time.
 
 `Lead` is the primary object the SDK works with: `client.leads.create(...)` resolves
 to a `Lead`.
@@ -18,10 +19,8 @@ npm install @cuongcds/octivo-node
 ```ts
 import { OctivoClient, ValidationError, ApiError } from '@cuongcds/octivo-node';
 
-const client = new OctivoClient({
-  baseUrl: 'https://your-domain.example.com',
-  sourceId: 'your-channel-source-id',
-});
+// baseUrl defaults to https://octivo.cloud; pass one to target a different environment.
+const client = new OctivoClient({ sourceId: 'your-channel-source-id' });
 
 try {
   const lead = await client.leads.create({

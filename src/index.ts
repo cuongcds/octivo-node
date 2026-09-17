@@ -1,4 +1,4 @@
-export { OctivoClient } from './OctivoClient.js';
+export { OctivoClient, DEFAULT_BASE_URL } from './OctivoClient.js';
 export type { OctivoClientOptions } from './OctivoClient.js';
 export { LeadsResource } from './LeadsResource.js';
 export { Lead } from './Lead.js';

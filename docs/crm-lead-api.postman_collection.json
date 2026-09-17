@@ -7,7 +7,7 @@
 	"variable": [
 		{
 			"key": "base_url",
-			"value": "https://your-domain.example.com",
+			"value": "https://octivo.cloud",
 			"type": "string"
 		},
 		{
