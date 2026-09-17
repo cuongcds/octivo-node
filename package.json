@@ -1,6 +1,6 @@
 {
   "name": "@cuongcds/octivo-node",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Node.js SDK for the Octivo CRM Lead capture API",
   "license": "MIT",
   "type": "module",
