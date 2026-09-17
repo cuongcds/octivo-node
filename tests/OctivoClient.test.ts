@@ -6,7 +6,7 @@ import { FakeHttpClient } from './FakeHttpClient.js';
 
 test('leads.create sends expected URL and fields', async () => {
   const http = new FakeHttpClient(200, '{"id": 1, "success": true}');
-  const client = new OctivoClient({ baseUrl: 'https://example.com/', sourceId: 'src-123', httpClient: http });
+  const client = new OctivoClient({ baseUrl: 'https://octivo.cloud/', sourceId: 'src-123', httpClient: http });
 
   const lead = await client.leads.create({
     phone: '0912345678',
@@ -16,7 +16,7 @@ test('leads.create sends expected URL and fields', async () => {
 
   assert.equal(lead.id, 1);
   assert.equal(lead.success, true);
-  assert.equal(http.lastUrl, 'https://example.com/api/lead/src-123');
+  assert.equal(http.lastUrl, 'https://octivo.cloud/api/lead/src-123');
   assert.deepEqual(http.lastFields, {
     utm_source: 'facebook-ads',
     name: 'Nguyen Van A',
@@ -35,7 +35,7 @@ test('leads.create defaults baseUrl to https://octivo.cloud when omitted', async
 
 test('missing email and phone throws ValidationError without sending a request', async () => {
   const http = new FakeHttpClient(200, '{"id": 1, "success": true}');
-  const client = new OctivoClient({ baseUrl: 'https://example.com', sourceId: 'src-123', httpClient: http });
+  const client = new OctivoClient({ baseUrl: 'https://octivo.cloud', sourceId: 'src-123', httpClient: http });
 
   await assert.rejects(() => client.leads.create({ name: 'Nguyen Van A' }), ValidationError);
   assert.equal(http.lastUrl, null);
@@ -44,7 +44,7 @@ test('missing email and phone throws ValidationError without sending a request',
 test('API error response throws ApiError', async () => {
   const body = '{"success": false, "error_message": "Nguồn không hợp lệ", "source_id": "bad"}';
   const http = new FakeHttpClient(400, body);
-  const client = new OctivoClient({ baseUrl: 'https://example.com', sourceId: 'bad', httpClient: http });
+  const client = new OctivoClient({ baseUrl: 'https://octivo.cloud', sourceId: 'bad', httpClient: http });
 
   await assert.rejects(
     () => client.leads.create({ phone: '0912345678' }),
