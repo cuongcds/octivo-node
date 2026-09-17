@@ -1,0 +1,337 @@
+{
+	"info": {
+		"name": "CRM Lead API",
+		"description": "Public, unauthenticated lead-capture endpoint used by landing pages/widgets to create a row in `crm_leads`, scoped to a channel via its public `source_id`. Optionally protected by Google reCAPTCHA v3 (only enforced when both `recaptcha_secret_key` is configured server-side and a `recaptcha_token` is sent).",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "https://your-domain.example.com",
+			"type": "string"
+		},
+		{
+			"key": "source_id",
+			"value": "your-channel-source-id",
+			"type": "string",
+			"description": "Public source_id of an active channel (see channels.source_id / channels.alt_source_id)."
+		},
+		{
+			"key": "recaptcha_token",
+			"value": "",
+			"type": "string",
+			"description": "Optional. reCAPTCHA v3 token generated client-side for action 'create_lead'. Only required/verified when recaptcha_secret_key is configured on the server."
+		}
+	],
+	"item": [
+		{
+			"name": "Create Lead (email + phone)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{ "key": "recaptcha_token", "value": "{{recaptcha_token}}", "description": "Optional" },
+						{ "key": "name", "value": "Nguyen Van A", "description": "Optional; falls back to email/phone if omitted" },
+						{ "key": "email", "value": "nguyenvana@example.com", "description": "Optional if phone is provided" },
+						{ "key": "phone", "value": "0912345678", "description": "Optional if email is provided" },
+						{ "key": "usecase", "value": "chatbot_sales", "description": "Optional free-text usecase label" },
+						{ "key": "utm_source", "value": "facebook-ads", "description": "Optional; any extra field is stored in meta (JSON)" },
+						{ "key": "utm_campaign", "value": "spring-promo", "description": "Optional; any extra field is stored in meta (JSON)" }
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/api/lead/{{source_id}}",
+					"host": ["{{base_url}}"],
+					"path": ["api", "lead", "{{source_id}}"]
+				},
+				"description": "Creates a lead with both email and phone plus a few extra fields that end up in meta."
+			},
+			"response": [
+				{
+					"name": "200 OK",
+					"originalRequest": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/x-www-form-urlencoded" }],
+						"url": {
+							"raw": "{{base_url}}/api/lead/{{source_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "lead", "{{source_id}}"]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"header": [{ "key": "Content-Type", "value": "application/json; charset=utf-8" }],
+					"body": "{\n    \"id\": 1,\n    \"success\": true\n}"
+				}
+			]
+		},
+		{
+			"name": "Create Lead (phone only, no name)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{ "key": "phone", "value": "0912345678" }
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/api/lead/{{source_id}}",
+					"host": ["{{base_url}}"],
+					"path": ["api", "lead", "{{source_id}}"]
+				},
+				"description": "Minimal valid request: only phone is provided, name is derived from phone server-side."
+			},
+			"response": []
+		},
+		{
+			"name": "Create Lead (email only, no name)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{ "key": "email", "value": "nguyenvana@example.com" }
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/api/lead/{{source_id}}",
+					"host": ["{{base_url}}"],
+					"path": ["api", "lead", "{{source_id}}"]
+				},
+				"description": "Minimal valid request: only email is provided, name is derived from email server-side."
+			},
+			"response": []
+		},
+		{
+			"name": "Create Lead - Error (missing email & phone)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{ "key": "name", "value": "Nguyen Van A" }
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/api/lead/{{source_id}}",
+					"host": ["{{base_url}}"],
+					"path": ["api", "lead", "{{source_id}}"]
+				},
+				"description": "Neither email nor phone is provided — expect a 400 error."
+			},
+			"response": [
+				{
+					"name": "400 Bad Request",
+					"originalRequest": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/x-www-form-urlencoded" }],
+						"url": {
+							"raw": "{{base_url}}/api/lead/{{source_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "lead", "{{source_id}}"]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"header": [{ "key": "Content-Type", "value": "application/json; charset=utf-8" }],
+					"body": "{\n    \"success\": false,\n    \"error_message\": \"Vui lòng nhập email hoặc số điện thoại\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Create Lead - Error (invalid source_id)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{ "key": "phone", "value": "0912345678" }
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/api/lead/non-existent-source-id",
+					"host": ["{{base_url}}"],
+					"path": ["api", "lead", "non-existent-source-id"]
+				},
+				"description": "source_id does not match any active channel — expect a 400 error."
+			},
+			"response": [
+				{
+					"name": "400 Bad Request",
+					"originalRequest": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/x-www-form-urlencoded" }],
+						"url": {
+							"raw": "{{base_url}}/api/lead/non-existent-source-id",
+							"host": ["{{base_url}}"],
+							"path": ["api", "lead", "non-existent-source-id"]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"header": [{ "key": "Content-Type", "value": "application/json; charset=utf-8" }],
+					"body": "{\n    \"source_id\": \"non-existent-source-id\",\n    \"success\": false,\n    \"error_message\": \"Nguồn không hợp lệ\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Create Lead - Error (invalid phone)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{ "key": "phone", "value": "123" }
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/api/lead/{{source_id}}",
+					"host": ["{{base_url}}"],
+					"path": ["api", "lead", "{{source_id}}"]
+				},
+				"description": "Phone number too short after normalization — expect a 400 error."
+			},
+			"response": [
+				{
+					"name": "400 Bad Request",
+					"originalRequest": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/x-www-form-urlencoded" }],
+						"url": {
+							"raw": "{{base_url}}/api/lead/{{source_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "lead", "{{source_id}}"]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"header": [{ "key": "Content-Type", "value": "application/json; charset=utf-8" }],
+					"body": "{\n    \"phone\": \"123\",\n    \"success\": false,\n    \"error_message\": \"Số điện thoại không hợp lệ\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Create Lead - Error (invalid email)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{ "key": "email", "value": "not-an-email" }
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/api/lead/{{source_id}}",
+					"host": ["{{base_url}}"],
+					"path": ["api", "lead", "{{source_id}}"]
+				},
+				"description": "Malformed email — expect a 400 error."
+			},
+			"response": [
+				{
+					"name": "400 Bad Request",
+					"originalRequest": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/x-www-form-urlencoded" }],
+						"url": {
+							"raw": "{{base_url}}/api/lead/{{source_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "lead", "{{source_id}}"]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"header": [{ "key": "Content-Type", "value": "application/json; charset=utf-8" }],
+					"body": "{\n    \"email\": \"not-an-email\",\n    \"success\": false,\n    \"error_message\": \"Email không hợp lệ\"\n}"
+				}
+			]
+		},
+		{
+			"name": "Create Lead - Error (recaptcha failed)",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{ "key": "recaptcha_token", "value": "invalid-or-low-score-token" },
+						{ "key": "phone", "value": "0912345678" }
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/api/lead/{{source_id}}",
+					"host": ["{{base_url}}"],
+					"path": ["api", "lead", "{{source_id}}"]
+				},
+				"description": "Only triggered when recaptcha_secret_key is configured server-side. Fails if the token is invalid, action mismatches 'create_lead', or the score is below 0.5."
+			},
+			"response": [
+				{
+					"name": "400 Bad Request",
+					"originalRequest": {
+						"method": "POST",
+						"header": [{ "key": "Content-Type", "value": "application/x-www-form-urlencoded" }],
+						"url": {
+							"raw": "{{base_url}}/api/lead/{{source_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "lead", "{{source_id}}"]
+						}
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"header": [{ "key": "Content-Type", "value": "application/json; charset=utf-8" }],
+					"body": "{\n    \"success\": false,\n    \"error_message\": \"Xác thực chống spam thất bại, vui lòng thử lại\"\n}"
+				}
+			]
+		}
+	]
+}
